@@ -1,10 +1,11 @@
-!> 主要用来处理 MSC.Patran BDF 文件
+!> author: 左志华
+!> date: 2022-07-27
+!>
+!> 主要用来处理 MSC.Patran BDF 文件 <br>
+!> - shell: 壳单元（点、三角面元、四边形面元）
+module bdf_parser_m
 
-!* - shell: 壳单元（点、三角面元、四边形面元）
-
-module bdf_api
-
-    use, intrinsic :: iso_fortran_env, only: rk => real32, stdout => output_unit
+    use, intrinsic :: iso_fortran_env, only: rk => real64, stdout => output_unit
     implicit none
     private
 
@@ -12,42 +13,53 @@ module bdf_api
 
     !> 节点结构体
     type grid_t
-        integer id
-        real(rk) loc(3)
+        integer :: id       !! Grid ID <br>
+                            !! 节点编号
+        real(rk) :: loc(3)  !! location of grid <br>
+                            !! 节点坐标
     end type grid_t
 
     !> 三角网格结构体
     type card3_t
-        integer id
-        integer grid(3)
-        integer index(3)
+        integer :: id       !! Grid ID <br>
+                            !! 节点编号
+        integer :: grid(3)  !! Grid ID of three nodes <br>
+                            !! 节点编号
+        integer :: index(3) !! index of three nodes <br>
+                            !! 节点编号
     end type card3_t
 
     !> 四边形网格结构体
     type card4_t
-        integer id
-        integer grid(4)
-        integer index(4)
+        integer :: id       !! Grid ID <br>
+                            !! 节点编号
+        integer :: grid(4)  !! Grid ID of four nodes <br>
+                            !! 节点编号
+        integer :: index(4) !! index of four nodes <br>
+                            !! 节点编号
     end type card4_t
 
     !> BDF 文件结构体（2D）
     type bdf_shell_t
-        integer card3_num, card4_num, grid_num
-        type(card3_t), allocatable :: card3(:)
-        type(card4_t), allocatable :: card4(:)
-        type(grid_t), allocatable :: grid(:)
+        integer :: card3_num, card4_num, grid_num
+        type(card3_t), allocatable :: card3(:)  !! card3_t 类型的数组，用来存储三角面元的信息
+        type(card4_t), allocatable :: card4(:)  !! card4_t 类型的数组，用来存储四边形面元的信息
+        type(grid_t), allocatable :: grid(:)    !! grid_t 类型的数组，用来存储节点的信息
     contains
-        procedure :: read  => bdf_shell_t_read_file
-        procedure :: link  => bdf_shell_t_link_process
+        procedure :: read => bdf_shell_t_read_file
+        procedure :: link => bdf_shell_t_link_process
     end type bdf_shell_t
 
 contains
 
+    !> Load BDF file <br>
     !> 读取 BDF 文件（2D）
     subroutine bdf_shell_t_read_file(self, filename, info)
         class(bdf_shell_t), intent(inout) :: self
-        character(len=*), intent(in) :: filename
-        logical, intent(in), optional :: info
+        character(len=*), intent(in) :: filename    !! BDF file name <br>
+                                                    !! BDF 文件名
+        logical, intent(in), optional :: info       !! print info <br>
+                                                    !! 打印信息
         integer :: bdf_unit
         character(:), allocatable :: buffer_str
         integer :: io_stat
@@ -55,7 +67,7 @@ contains
 
         count_card3 = 0
         count_card4 = 0
-        count_grid  = 0
+        count_grid = 0
 
         open (newunit=bdf_unit, file=filename, status='old', action='read')
         allocate (character(6) :: buffer_str)
@@ -66,7 +78,7 @@ contains
 
             select case (buffer_str(1:6))
             case ("GRID")
-                count_grid  = count_grid  + 1
+                count_grid = count_grid + 1
             case ("CQUAD4")
                 count_card4 = count_card4 + 1
             case ("CTRIA3")
@@ -77,7 +89,7 @@ contains
         allocate (self%card3(count_card3), self%card4(count_card4), self%grid(count_grid))
         self%card3_num = count_card3
         self%card4_num = count_card4
-        self%grid_num  = count_grid
+        self%grid_num = count_grid
 
         if (present(info)) then
             if (info) then
@@ -93,7 +105,7 @@ contains
         allocate (character(80) :: buffer_str)
         count_card3 = 0
         count_card4 = 0
-        count_grid  = 0
+        count_grid = 0
 
         do
             read (bdf_unit, "(a)", iostat=io_stat) buffer_str
@@ -102,7 +114,7 @@ contains
 
             select case (buffer_str(1:6))
             case ("GRID")
-                count_grid  = count_grid  + 1
+                count_grid = count_grid + 1
                 read (buffer_str, "(t9,i8,t25,3g8.1)") &
                     self%grid(count_grid)%id, &
                     self%grid(count_grid)%loc(1:3)
@@ -123,13 +135,15 @@ contains
         deallocate (buffer_str)
 
     end subroutine bdf_shell_t_read_file
-    
+
+    !> Link process <br>
+    !> 链接节点与壳单元
     pure subroutine bdf_shell_t_link_process(self)
         class(bdf_shell_t), intent(inout) :: self
-        integer i, j
+        integer :: i, j
 
-        do concurrent (i = 1:self%grid_num)
-            do concurrent (j = 1:self%card3_num)
+        do concurrent(i=1:self%grid_num)
+            do concurrent(j=1:self%card3_num)
                 if (self%grid(i)%id == self%card3(j)%grid(1)) then
                     self%card3(j)%index(1) = i
                 elseif (self%grid(i)%id == self%card3(j)%grid(2)) then
@@ -138,7 +152,8 @@ contains
                     self%card3(j)%index(3) = i
                 end if
             end do
-            do concurrent (j = 1:self%card4_num)
+
+            do concurrent(j=1:self%card4_num)
                 if (self%grid(i)%id == self%card4(j)%grid(1)) then
                     self%card4(j)%index(1) = i
                 elseif (self%grid(i)%id == self%card4(j)%grid(2)) then
@@ -153,4 +168,4 @@ contains
 
     end subroutine bdf_shell_t_link_process
 
-end module bdf_api
+end module bdf_parser_m

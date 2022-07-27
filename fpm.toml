@@ -1,9 +1,9 @@
-name = "bdf-api"
-version = "0.1.0"
+name = "bdf-parser"
+version = "0.1.1"
 license = "MIT"
-author = "zoziha"
-maintainer = "zuo.zhihua@qq.com"
-copyright = "Copyright 2022, zoziha"
+author = "左志华"
+maintainer = "左志华(zuo.zhihua@qq.com)"
+copyright = "Copyright 2022, 左志华"
 
 [build]
 auto-executables = true

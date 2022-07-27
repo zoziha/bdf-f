@@ -2,7 +2,7 @@
 
 A collection of commonly used functions for MSC.Patran's BDF and date for Fortran.
 
-*Suggestions and code contributions are welcome.*
+**欢迎建议与代码贡献！**
 
 ```fortran
 use bdf_parser_m, only: bdf_shell_t
