@@ -1,25 +1,24 @@
-# MSC.PATRAN BDF Reader API
+# [MSC.PATRAN BDF 文件解析库][1]
 
-A collection of commonly used functions for MSC.Patran's BDF and date for Fortran.
+MSC.Patran/Gmsh BDF 网格文件解析库，Fortran 面向对象风格。
 
 **欢迎建议与代码贡献！**
 
-```fortran
-use bdf_parser_m, only: bdf_shell_t
-```
+[1]: https://gitee.com/Ship-Motions/BDF-parser
 
-## Build with [Fortran-lang/fpm](https://github.com/fortran-lang/fpm)
+## 使用 [Fortran-lang/fpm](https://github.com/fortran-lang/fpm) 构建
 
 ```sh
-fpm run --example --list
+fpm run --example --all
 ```
 
 ```toml
 [dependencies]
-bdf-parser = { git = "https://gitee.com/ship-motions/bdf-parser.git" }
+bdf-parser = { git = "https://gitee.com/ship-motions/bdf-parser" }
 ```
 
-## Reference
+## API 文档
 
-- [fortran-lang/stdlib](https://github.com/fortran-lang/stdlib)
-- [fortran-fans/forlab](https://github.com/fortran-fans/forlab)
+```sh
+ford FORD-project-file.md
+```
