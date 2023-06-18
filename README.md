@@ -8,9 +8,11 @@
 
 MSC.Patran/Gmsh BDF 网格文件解析，采用面向对象风格。
 
-**欢迎建议与代码贡献！**
+**总体上，本仓库功能有限，欢迎建议与代码贡献！**
 
 </div>
+
+
 
 ## 使用 [Fortran-lang/fpm](https://github.com/fortran-lang/fpm) 构建
 

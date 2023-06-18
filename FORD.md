@@ -1,6 +1,6 @@
 ---
-project: bdf-f
-summary: MSC.Patran/Gmsh BDF File IO <br>
+project: 🌓bdf-f
+summary: MSC.Patran/Gmsh BDF File I/O <br>
          MSC.Patran/Gmsh BDF 网格文件解析
 src_dir: src
 preprocess: false
@@ -21,3 +21,5 @@ creation_date: %Y-%m-%d %H:%M %z
 
 @note 船海结构设计时，有时候需要将自定义模型的压强数值导入到 MSC.Patran 中进行后续分析，
 而 MSC.Patran 的网格文件格式为 BDF，`bdf-f` 项目来源于此。
+
+相关项目：[stl-fortran](https://github.com/jacobwilliams/stl-fortran).
