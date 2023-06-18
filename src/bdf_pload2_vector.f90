@@ -25,11 +25,18 @@ module bdf_pload2_vector
 contains
 
     !> Initialize PLOAD2 vector
-    pure subroutine init(self)
+    pure subroutine init(self, n)
         class(pload2_vector), intent(inout) :: self
+        integer, intent(in), optional :: n
 
         self%len = 0
-        if (.not. allocated(self%items)) allocate (self%items(1000))
+        if (.not. allocated(self%items)) then
+            if (present(n)) then
+                allocate (self%items(n))
+            else
+                allocate (self%items(1000))
+            end if
+        end if
 
     end subroutine init
 

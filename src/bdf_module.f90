@@ -114,10 +114,11 @@ contains
     end subroutine read_bdf_file
 
     !> 初始化压强
-    subroutine init_pressure(self)
+    subroutine init_pressure(self, n)
         class(bdf_file), intent(inout) :: self
+        integer, intent(in), optional :: n  !! 预估的压强数组大小，用于压缩数组的初始长度
 
-        call self%pload2%init()
+        call self%pload2%init(n)
 
     end subroutine init_pressure
 
